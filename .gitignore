@@ -20,6 +20,10 @@
 *.rar
 
 .idea/
+<<<<<<< HEAD
+=======
+
+>>>>>>> 53ee264dea809cd47428ea6871a00e459c9eec43
 out/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
