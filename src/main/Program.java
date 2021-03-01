@@ -12,6 +12,12 @@ import java.io.IOException;
 
 public class Program extends Application {
 
+    private static Scene principal;
+
+    public static Scene getPrincipal(){
+        return principal;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -21,7 +27,7 @@ public class Program extends Application {
             root.setFitToHeight(true);
             root.setFitToWidth(true);
 
-            Scene principal = new Scene(root);
+            principal = new Scene(root);
             primaryStage.setScene(principal);
             primaryStage.setTitle("CRUD - JavaFX with JDBC");
             primaryStage.show();
