@@ -29,16 +29,17 @@ public class MainViewController implements Initializable {
     }
 
     public void onMenuItemDepartamento() {
-        System.out.print("onMenuItemDepartamento");
+        loadView("/gui/ListDepartamento.fxml");
     }
 
     public void onMenuItemSobre() {
-        loadSobre("/gui/Sobre.fxml");
+        loadView("/gui/Sobre.fxml");
     }
 
     // A palavra synchronized garante que o processamento da interface gráfica não seja interrompido durante o multithreading do processador.
 
-    private synchronized void loadSobre(String nomeAbsoluto){
+    private synchronized void loadView(String nomeAbsoluto){
+
         /*
         * O que faremos aqui é exibir o conteúdo do arquivo 'Sobre' dentro da Vbox da janela (cena) principal.
         *
@@ -48,8 +49,8 @@ public class MainViewController implements Initializable {
         * A variável newVbox recebe o conteúdo do arquivo FXML.
         * É necessário criar uma referência para a VBox da cena principal.
         *
-        * Agora é necessário excluir todos <children> do mainVbox e em seguida incluir on elementos do MenuBar
-        * e os <children> da cena (arquivo) Sobre.fxml.
+        * Agora é necessário excluir todos <children> do mainVbox e em seguida incluir os elementos do MenuBar
+        * e os <children> da nova cena (arquivo).
         */
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto));
@@ -65,12 +66,11 @@ public class MainViewController implements Initializable {
 
             VBox mainVbox = (VBox) ((ScrollPane) aux_mainScene.getRoot()).getContent();
 
-            // Criasse um Node auxiliar para receber o conteúdo do MenuBar.
+            // Cria-se um Node auxiliar para receber o conteúdo do MenuBar.
             Node mainMenu = mainVbox.getChildren().get(0);
 
             // Comando para limpar todos os filhos de MainVbox.
             mainVbox.getChildren().clear();
-
 
             // Adicionando mainMenu e conteúdo do VBox de Sobre.fxml para o VBox da cena principal.
             mainVbox.getChildren().add(mainMenu);
@@ -80,9 +80,6 @@ public class MainViewController implements Initializable {
         } catch (IOException e){
             Util.showAlerts(Alert.AlertType.ERROR,"IO Exception", "Erro ao carregar janela", e.getMessage());
         }
-
-
-
     }
 
     @Override
