@@ -87,7 +87,7 @@ public class MainViewController implements Initializable {
             // Agora que o método está genérico, o getController(); retorna um valor T que é definido na função anônima
             T controller = loader.getController();
             consumer.accept(controller);
-            
+
         } catch (IOException e){
             Util.showAlerts(Alert.AlertType.ERROR,"IO Exception", "Erro ao carregar janela", e.getMessage());
         }

@@ -1,7 +1,6 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class Department implements Serializable{
 
@@ -36,7 +35,7 @@ public class Department implements Serializable{
 
         Department that = (Department) o;
 
-        return Objects.equals(id, that.id);
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
@@ -49,3 +48,5 @@ public class Department implements Serializable{
         return "Department {" + "id=" + id + ", name='" + name + '\'' + '}';
     }
 }
+
+
