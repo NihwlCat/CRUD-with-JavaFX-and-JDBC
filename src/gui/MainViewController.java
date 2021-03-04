@@ -15,6 +15,7 @@ import services.DepartmentService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class MainViewController implements Initializable {
 
@@ -30,44 +31,22 @@ public class MainViewController implements Initializable {
     }
 
     public void onMenuItemDepartamento() {
-        loadView2("/gui/ListDepartamento.fxml");
-    }
+        // Passando função anônima para ação de inicialização
 
-    // Método Provisório
-    private void loadView2(String s) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(s));
-        try {
-            VBox newVbox = loader.load();
-
-            Scene aux_mainScene = Program.getPrincipal();
-
-            VBox mainVbox = (VBox) ((ScrollPane) aux_mainScene.getRoot()).getContent();
-
-            Node mainMenu = mainVbox.getChildren().get(0);
-
-            mainVbox.getChildren().clear();
-
-            mainVbox.getChildren().add(mainMenu);
-            mainVbox.getChildren().addAll(newVbox.getChildren());
-
-            DepartmentListController controller = loader.getController();
-
-            // Injetando dependência
+        loadView("/gui/ListDepartamento.fxml",(DepartmentListController controller) -> {
             controller.setService(new DepartmentService());
             controller.updateTableView();
-
-        } catch (IOException e){
-            Util.showAlerts(Alert.AlertType.ERROR,"IO Exception", "Erro ao carregar janela", e.getMessage());
-        }
+        });
     }
 
     public void onMenuItemSobre() {
-        loadView("/gui/Sobre.fxml");
+        loadView("/gui/Sobre.fxml", x -> {});
     }
 
     // A palavra synchronized garante que o processamento da interface gráfica não seja interrompido durante o multithreading do processador.
+    // Parametrização do método loadView
 
-    private synchronized void loadView(String nomeAbsoluto){
+    private synchronized <T> void loadView(String nomeAbsoluto, Consumer<T> consumer){
 
         /*
         * O que faremos aqui é exibir o conteúdo do arquivo 'Sobre' dentro da Vbox da janela (cena) principal.
@@ -105,7 +84,10 @@ public class MainViewController implements Initializable {
             mainVbox.getChildren().add(mainMenu);
             mainVbox.getChildren().addAll(newVbox.getChildren());
 
-
+            // Agora que o método está genérico, o getController(); retorna um valor T que é definido na função anônima
+            T controller = loader.getController();
+            consumer.accept(controller);
+            
         } catch (IOException e){
             Util.showAlerts(Alert.AlertType.ERROR,"IO Exception", "Erro ao carregar janela", e.getMessage());
         }
