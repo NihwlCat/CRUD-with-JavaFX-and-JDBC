@@ -1,10 +1,19 @@
 package gui;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+
 
 public class Util {
+
+    public static Stage palcoAtual(ActionEvent event){
+        return (Stage) ((Node) event.getSource()).getScene().getWindow();
+    }
 
     public static void showAlerts (AlertType type, String ... args){
         Alert alert = new Alert(type);
