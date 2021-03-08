@@ -12,6 +12,10 @@ public class Department implements Serializable{
         this.name = name;
     }
 
+    //Provisório
+
+    public Department(){}
+
     public Integer getId() {
         return id;
     }

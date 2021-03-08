@@ -17,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import listener.DataChangeListener;
 import main.Program;
 import services.DepartmentService;
 
@@ -24,7 +25,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class DepartmentListController implements Initializable {
+
+// DataChangeListener : interface para implementar o Observer do Subject
+public class DepartmentListController implements Initializable, DataChangeListener {
 
     // Dependência que precisa ser injetada através de uma classe externa para evitar forte acoplamento.
 
@@ -58,7 +61,13 @@ public class DepartmentListController implements Initializable {
 
     public void onButtonNovoAction(ActionEvent event){
         // event é uma referência para o controle que recebeu o evento. No caso o botão
-        initDialogForm("/gui/DepartmentForm.fxml",Util.palcoAtual(event));
+
+        // instanciação provisório de Department que é passada como argumento para a função de iniciar a tela.
+
+        Department obj = new Department();
+        obj.setName("");
+        initDialogForm(obj,"/gui/DepartmentForm.fxml",Util.palcoAtual(event));
+
     }
 
     @Override
@@ -82,7 +91,7 @@ public class DepartmentListController implements Initializable {
         tableViewDepartment.prefHeightProperty().bind(stage.heightProperty());
     }
 
-    private void initDialogForm(String absolutString, Stage stage){
+    private void initDialogForm(Department obj, String absolutString, Stage stage){
         FXMLLoader loader = new FXMLLoader(getClass().getResource(absolutString));
 
         try {
@@ -90,6 +99,13 @@ public class DepartmentListController implements Initializable {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Insira o nome do departamento: ");
             dialogStage.setScene(new Scene(pane));
+
+            //Injetando dependência de obj para o Controller da tela DepartmentForm.
+            DepartmentFormController controller = loader.getController();
+            controller.setEntidade(obj);
+            controller.setService(new DepartmentService());
+            controller.subscribeListener(this); // Inscrevendo essa classe na lista de listeners da Subject
+            controller.updateFormData();
 
             dialogStage.setResizable(false);
             //Método para inserir o palco Pai do palco que é o formulário de diálogo.
@@ -101,5 +117,10 @@ public class DepartmentListController implements Initializable {
             Util.showAlerts(Alert.AlertType.ERROR,"IO Exception", "Erro ao carregar janela", e.getMessage());
         }
 
+    }
+
+    @Override
+    public void onChanged() {
+        updateTableView();
     }
 }
