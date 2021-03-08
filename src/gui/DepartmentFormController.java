@@ -1,9 +1,12 @@
 package gui;
 
+import db.DBException;
 import entities.Department;
+import exceptions.ValidationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -11,9 +14,7 @@ import listener.DataChangeListener;
 import services.DepartmentService;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DepartmentFormController implements Initializable {
 
@@ -55,8 +56,18 @@ public class DepartmentFormController implements Initializable {
     private Department getFormData(){
         Department obj = new Department();
 
+        ValidationException excep = new ValidationException("Validation errors");
+
         obj.setId(Util.tryParsetoInt(idInsert.getText()));
+
+        if (nameInsert.getText() == null || nameInsert.getText().trim().equals(""))
+            excep.addErrors("name","Campo vazio");
+
         obj.setName(nameInsert.getText());
+
+        if (excep.getErrors().size() > 0){
+            throw excep;
+        }
 
         return obj;
     }
@@ -73,12 +84,29 @@ public class DepartmentFormController implements Initializable {
         Util.palcoAtual(event).close();
     }
 
-    public void onBtSaveAction(){
+    public void onBtSaveAction(ActionEvent event){
 
-        entidade = getFormData();
-        service.saveOrUpdate(entidade);
-        notifyListeners();
-        // Notificando que houve alteração.
+        if(entidade == null){
+            throw new IllegalStateException("Entidade = null");
+        }
+        if(service == null){
+            throw new IllegalStateException("Service = null");
+        }
+
+        try {
+            entidade = getFormData();
+            service.saveOrUpdate(entidade);
+            notifyListeners();
+            Util.palcoAtual(event).close();
+            // Notificando que houve alteração.
+        } catch(ValidationException e){
+
+            setErrorsMessage(e.getErrors());
+        } catch(DBException e){
+
+            Util.showAlerts(Alert.AlertType.ERROR,"DB Exception", null, e.getMessage());
+        }
+
     }
 
     private void initializeNodes(){
@@ -97,6 +125,13 @@ public class DepartmentFormController implements Initializable {
 
     }
 
+    private void setErrorsMessage(Map<String,String> errors){
+        Set<String> keys = errors.keySet();
+
+        if(keys.contains("name")){
+            labelErro.setText(errors.get("name"));
+        }
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeNodes();
