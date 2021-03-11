@@ -1,5 +1,6 @@
 package gui;
 
+import entities.Seller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import main.Program;
 import services.DepartmentService;
+import services.SellerService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +29,11 @@ public class MainViewController implements Initializable {
     private MenuItem menuItemSobre;
 
     public void onMenuItemVendedor() {
-        System.out.print("onMenuItemVendedor");
+
+        loadView("/gui/ListVendedores.fxml",(SellerListController controller) -> {
+            controller.setService(new SellerService());
+            controller.updateTableView();
+        });
     }
 
     public void onMenuItemDepartamento() {

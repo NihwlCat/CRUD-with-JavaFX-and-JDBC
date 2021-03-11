@@ -4,6 +4,7 @@ import db.DB;
 import db.DBException;
 import db.DBIntegrityException;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,7 +138,7 @@ public class SellerDaoJDBC implements SellerDAO {
                         rs.getInt("Id"),
                         rs.getString("Name"),
                         rs.getString("Email"),
-                        rs.getDate("BirthDate"),
+                        new java.util.Date(rs.getDate("BirthDate").getTime()), /*Data em util.Date*/
                         rs.getDouble("BaseSalary"),
                         new Department(rs.getInt("DepartmentId"),rs.getString("Departamento")));
 
@@ -193,7 +194,7 @@ public class SellerDaoJDBC implements SellerDAO {
                         rs.getInt("Id"),
                         rs.getString("Name"),
                         rs.getString("Email"),
-                        rs.getDate("BirthDate"),
+                        new java.util.Date(rs.getDate("BirthDate").getTime()),
                         rs.getDouble("BaseSalary"),
                         dep
                 );
@@ -251,7 +252,7 @@ public class SellerDaoJDBC implements SellerDAO {
                         rs.getInt("Id"),
                         rs.getString("Name"),
                         rs.getString("Email"),
-                        rs.getDate("BirthDate"),
+                        new java.util.Date(rs.getDate("BirthDate").getTime()),
                         rs.getDouble("BaseSalary"),
                         dep
                 );

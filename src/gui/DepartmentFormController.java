@@ -130,6 +130,8 @@ public class DepartmentFormController implements Initializable {
 
         if(keys.contains("name")){
             labelErro.setText(errors.get("name"));
+        } else {
+            labelErro.setText("");
         }
     }
     @Override
