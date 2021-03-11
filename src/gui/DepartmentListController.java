@@ -1,5 +1,6 @@
 package gui;
 
+import db.DBIntegrityException;
 import entities.Department;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -8,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -21,6 +21,7 @@ import services.DepartmentService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 
@@ -32,6 +33,9 @@ public class DepartmentListController implements Initializable, DataChangeListen
     private DepartmentService service;
 
     private ObservableList<Department> obsList;
+
+    @FXML
+    private TableColumn<Department,Department> tableColumnREMOVE;
 
     @FXML
     private TableView<Department> tableViewDepartment;
@@ -52,6 +56,8 @@ public class DepartmentListController implements Initializable, DataChangeListen
         this.service = service;
     }
 
+
+
     public void updateTableView(){
         if (service == null) {
             throw new IllegalStateException("Service não instanciado");
@@ -59,6 +65,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
         obsList = FXCollections.observableArrayList(service.findAll());
         tableViewDepartment.setItems(obsList);
         initButtons();
+        removeButtons();
     }
 
     public void onButtonNovoAction(ActionEvent event){
@@ -78,6 +85,43 @@ public class DepartmentListController implements Initializable, DataChangeListen
 
     }
 
+    private void removeButtons(){
+        tableColumnREMOVE.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnREMOVE.setCellFactory(param -> new TableCell<Department,Department>(){
+            private final Button button = new Button("Remover");
+
+            @Override
+            protected void updateItem(Department obj, boolean empty){
+                super.updateItem(obj,empty);
+
+                if(obj == null){
+                    setGraphic(null);
+                    return;
+                }
+
+                setGraphic(button);
+                button.setOnAction(event -> removeEntity(obj));
+            }
+        });
+    }
+
+    private void removeEntity(Department obj){
+        // Optional é usado para carregar um objeto. É uma classe que armazena um objeto.
+        Optional<ButtonType> res = Util.showConfirmation(Alert.AlertType.CONFIRMATION,"Remover departamento","Confirme para remover");
+        if(res.get() == ButtonType.OK){
+            if(service == null){
+                throw new IllegalStateException("Serviço não injetado");
+            }
+
+            try {
+                service.removeDepartment(obj);
+            } catch (DBIntegrityException e){
+                Util.showAlerts(Alert.AlertType.ERROR,"ERRO",null,e.getMessage());
+            }
+            updateTableView();
+
+        }
+    }
     private void initButtons (){
         // Não entendi porra nenhuma desse boilerplate
 

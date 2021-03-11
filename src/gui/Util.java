@@ -4,9 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.Optional;
 
 
 public class Util {
@@ -30,6 +32,18 @@ public class Util {
         alert.setContentText(args[2]);
 
         alert.show();
+    }
+
+
+    // Alerta de confirmação para remover departamento. Interface Optional<>
+    public static Optional<ButtonType> showConfirmation(AlertType type, String ... args){
+        Alert alert = new Alert(type);
+
+        alert.setTitle(args[0]);
+        alert.setHeaderText(null);
+        alert.setContentText(args[1]);
+
+        return alert.showAndWait();
     }
 
     public static void setTextFieldInt(TextField txt){
